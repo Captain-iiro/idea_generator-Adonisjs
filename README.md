@@ -39,15 +39,35 @@ npm install
 
 3. Copier le fichier d'environnement et ajuster les variables
 
-````bash
-cp .env .env.example
-``
+Copiez l'exemple et ajustez les valeurs (important : `APP_KEY` doit être défini pour éviter l'erreur `EnvValidationException`):
+
+```bash
+# Copier l'exemple en .env
+cp .env.example .env
+
+# (Optionnel) ou en local
+cp .env.example .env.local
+```
+
+Générer une `APP_KEY` sécurisée (exemples) :
+
+```bash
+# Avec OpenSSL
+openssl rand -base64 32
+
+# Ou (si Node supporte require) :
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+Collez la clé générée dans la variable `APP_KEY` du fichier `.env`.
+
+Note: Si vous lancez `node build/bin/server.js` (mode production), assurez-vous que les variables d'environnement requises sont disponibles dans l'environnement d'exécution ou que le fichier `.env` existe à la racine du projet. L'absence de `APP_KEY`, `DB_USER`, `DB_DATABASE`, etc. provoquera des erreurs `EnvValidationException` comme celles que vous avez vues.
 
 ## Lancement en développement
 
 ```bash
 npm run dev
-````
+```
 
 Visitez `http://localhost:3333` pour l'interface Inertia.
 
