@@ -6,8 +6,9 @@ export default function render(page: any) {
     page,
     render: ReactDOMServer.renderToString,
     resolve: (name) => {
-      const pages = import.meta.glob('../pages/**/*.tsx', { eager: true })
-      return pages[`../pages/${name}.tsx`]
+      const pages = import.meta.glob<{ default: any }>('../pages/**/*.tsx', { eager: true })
+      const module = pages[`../pages/${name}.tsx`]
+      return module.default
     },
     setup: ({ App, props }) => <App {...props} />,
   })
