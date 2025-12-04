@@ -6,8 +6,8 @@ import { NextFn } from '@adonisjs/core/types/http'
  * Permet les requêtes sans authentification
  */
 export default class ApiMiddleware {
-  handle(ctx: HttpContext, next: NextFn) {
-    console.log('🔓 API Middleware - bypassing auth checks')
+  handle(_ctx: HttpContext, next: NextFn) {
+    console.log('API Middleware - bypassing auth checks')
     return next()
   }
 }
