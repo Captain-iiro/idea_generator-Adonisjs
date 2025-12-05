@@ -1,4 +1,4 @@
-name: Deploy AdonisJS to cPanel
+name: Deploy AdonisJS to cPanel via SFTP
 
 on:
   push:
@@ -8,74 +8,71 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    name: 🎉 Déploiement Fullstack via SFTP
 
     steps:
       # 1. Checkout du code
-      - name: Checkout code
+      - name: 🚚 Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (Version recommandée par cPanel)
-      - name: Setup Node.js
+      # 2. Setup Node.js
+      - name: 💻 Setup Node.js (v20)
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Utilisez '20' ou '22'
+          node-version: '20' # Version récente et stable
           cache: 'npm'
 
       # 3. Installer les dépendances
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      # 4. Build l'application
-      # Nous injectons les secrets requis pour la phase de compilation (ex: pour la signature des assets, même si l'APP_KEY est la plus critique)
-      - name: Build application
+      # 4. Build l'application Adonis/Inertia
+      - name: 🛠 Build application (Front + Back)
         run: node ace build
         env:
           NODE_ENV: production
-          APP_KEY: ${{ secrets.APP_KEY }}
-          # On peut ajouter les variables de DB ici, bien qu'elles soient surtout utiles à l'exécution sur cPanel
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          # Les secrets sont requis pour le build/signature des assets
+          APP_KEY: ${{ secrets.APP_KEY }} 
+          DB_HOST: ${{ secrets.DB_HOST }} 
+          # ... autres secrets BDD ...
 
-      # 5. Déployer via FTP
-      - name: FTP Deploy
+      # 5. Déployer via SFTP
+      - name: 📂 Upload Fullstack à cPanel
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
-          # Secrets GitHub (identifiants d'accès au serveur)
+          # Secrets GitHub
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
+          # ⚠️ Protocole de sécurité recommandé pour cPanel
+          protocol: sftp 
+          
           # Chemin cible sur le serveur FTP (dossier de l'application)
-          ftp-server-target: /home/nexiszjj/nexionconsultingdj.com/abdourahmanabdillahi
+          ftp-server-target: /home/nexisz__manabdillahi/idea_generator-Adonisjs
 
           # Déployer depuis la racine locale
           local-dir: ./
 
           # Fichiers et dossiers à EXCLURE du déploiement
+          # L'exclusion du .env est CLÉ, car les variables sont gérées par cPanel
           exclude: |
             .git*
             .github*
             node_modules/**
             .env*
             tsconfig.json
-            eslint.config.js
-            vite.config.ts
-            adonisrc.ts
-            package-lock.json
+            *.lock
             tests/**
             inertia/**
-            *.test.ts
-            *.spec.ts
             README.md
-
+            
       # 6. Notification de succès
-      - name: Deploy Success
+      - name: ✅ Deploy Success
         if: success()
-        run: echo "Déploiement réussi sur le serveur FTP!"
+        run: echo "Déploiement SFTP terminé. Redémarrage requis sur cPanel."
 
       # 7. Notification d'erreur
-      - name: Deploy Failed
+      - name: ❌ Deploy Failed
         if: failure()
-        run: echo "Déploiement échoué - vérifiez les logs ci-dessus"
+        run: echo "Déploiement échoué. Vérifiez les logs FTP/SFTP."
