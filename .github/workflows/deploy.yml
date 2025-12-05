@@ -28,7 +28,7 @@ jobs:
       # 4. Build l'application
       # Nous injectons les secrets requis pour la phase de compilation (ex: pour la signature des assets, même si l'APP_KEY est la plus critique)
       - name: Build application
-        run: node ace build --production
+        run: node ace build
         env:
           NODE_ENV: production
           APP_KEY: ${{ secrets.APP_KEY }}
