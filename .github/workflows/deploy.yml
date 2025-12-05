@@ -44,10 +44,6 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-
-          # ⚠️ Protocole de sécurité recommandé pour cPanel
-          protocol: sftp 
-          
           # Chemin cible sur le serveur FTP (dossier de l'application)
           server-dir: /home/nexiszjj/nexionconsultingdj.com/abdourahmanabdillahi
 
