@@ -49,7 +49,7 @@ jobs:
           protocol: sftp 
           
           # Chemin cible sur le serveur FTP (dossier de l'application)
-          ftp-server-target: /home/nexiszjj/nexionconsultingdj.com/abdourahmanabdillahi
+          server-dir: /home/nexiszjj/nexionconsultingdj.com/abdourahmanabdillahi
 
           # Déployer depuis la racine locale
           local-dir: ./
