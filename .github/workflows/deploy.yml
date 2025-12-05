@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
 
           # Chemin cible sur le serveur FTP (dossier de l'application)
-          ftp-server-target: /home/nexisz__manabdillahi/idea_generator-Adonisjs
+          ftp-server-target: 	/home/nexiszjj
 
           # Déployer depuis la racine locale
           local-dir: ./
