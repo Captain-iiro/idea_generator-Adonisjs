@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # Chemin cible sur le serveur FTP (dossier de l'application)
-          server-dir: /home/
+          server-dir: /home/nexiszjj/
           protocol: ftps
 
           # Déployer depuis la racine locale
