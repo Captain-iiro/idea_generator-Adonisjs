@@ -32,7 +32,7 @@ jobs:
         env:
           NODE_ENV: production
           # Les secrets sont requis pour le build/signature des assets
-          APP_KEY: ${{ secrets.APP_KEY }} 
+          APP_KEY: ErQO3MJLfQL9UNTsAlG8IIJL-YpCgC6l
           DB_HOST: ${{ secrets.DB_HOST }} 
           # ... autres secrets BDD ...
 
