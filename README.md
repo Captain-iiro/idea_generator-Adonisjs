@@ -17,7 +17,7 @@
 
 ## Prérequis
 
-- Node.js (recommandé > 18)
+- Node.js (recommandé >= 22)
 - Yarn ou npm
 
 ## Installation
