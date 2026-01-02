@@ -1,0 +1,75 @@
+name: Deploy AdonisJS to cPanel via SFTP
+
+on:
+  push:
+    branches:
+      - master # Déclenche le déploiement sur chaque push sur master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: 🎉 Déploiement Fullstack via SFTP
+
+    steps:
+      # 1. Checkout du code
+      - name: 🚚 Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: 💻 Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Version récente et stable
+          cache: 'npm'
+
+      # 3. Installer les dépendances
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # 4. Build l'application Adonis/Inertia
+      - name: 🛠 Build application (Front + Back)
+        run: node ace build
+        env:
+          NODE_ENV: production
+          # Les secrets sont requis pour le build/signature des assets
+          APP_KEY: ErQO3MJLfQL9UNTsAlG8IIJL-YpCgC6l
+          DB_HOST: ${{ secrets.DB_HOST }} 
+          # ... autres secrets BDD ...
+
+      # 5. Déployer via SFTP
+      - name: 📂 Upload Fullstack à cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          # Secrets GitHub
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Chemin cible sur le serveur FTP (dossier de l'application)
+          server-dir: /home/nexiszjj/
+          protocol: ftps
+
+          # Déployer depuis la racine locale
+          local-dir: ./
+
+          # Fichiers et dossiers à EXCLURE du déploiement
+          # L'exclusion du .env est CLÉ, car les variables sont gérées par cPanel
+          exclude: |
+            .git*
+            .github*
+            node_modules/**
+            .env*
+            tsconfig.json
+            *.lock
+            tests/**
+            inertia/**
+            README.md
+            
+      # 6. Notification de succès
+      - name: ✅ Deploy Success
+        if: success()
+        run: echo "Déploiement SFTP terminé. Redémarrage requis sur cPanel."
+
+      # 7. Notification d'erreur
+      - name: ❌ Deploy Failed
+        if: failure()
+        run: echo "Déploiement échoué. Vérifiez les logs FTP/SFTP."
