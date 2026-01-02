@@ -1,30 +1,31 @@
-# Utilisation de la version la plus récente de Node sur Alpine
+# Phase 1: Build
 FROM node:23-alpine AS builder
 
 WORKDIR /app
 
-# Installation des dépendances
 COPY package*.json ./
 RUN npm ci
 
-# Copie du code et build de l'application Adonis
 COPY . .
+# Cette commande compile le TS ET lance 'vite build' automatiquement
 RUN node ace build
 
-# Phase finale de production
+# Phase 2: Production
 FROM node:23-alpine
 
 WORKDIR /app
 
-# Copie des fichiers compilés
+# On copie tout le dossier build
 COPY --from=builder /app/build ./build
+# IMPORTANT : On copie aussi les fichiers statiques compilés pour le front
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 
-# Installation des dépendances de prod uniquement
 RUN npm ci --omit=dev
 
-# On expose le port standard d'Adonis
+# Adonis a besoin de savoir qu'il est en prod pour chercher le manifest.json
+ENV NODE_ENV=production
+
 EXPOSE 3333
 
-# Commande de démarrage
 CMD ["node", "build/bin/server.js"]
