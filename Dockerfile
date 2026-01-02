@@ -18,20 +18,19 @@ FROM node:23-alpine
 
 WORKDIR /app
 
-# On copie TOUT le contenu du dossier build généré
-# Le dossier build d'Adonis contient déjà : /bin, /public, /config, etc.
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/package*.json ./
-
 # Installation des dépendances de prod uniquement
+COPY package*.json ./
 RUN npm ci --omit=dev
+
+# Copie du build généré vers la racine de l'application
+COPY --from=builder /app/build .
 
 # Variables d'environnement de production
 ENV NODE_ENV=production
-# On s'assure que l'app écoute sur toutes les interfaces réseau du conteneur
-ENV HOST=0.0.0.0 
+ENV HOST=0.0.0.0
+ENV PORT=3333
 
 EXPOSE 3333
 
-# On lance le serveur depuis le dossier build
-CMD ["node", "build/bin/server.js"]
+# On lance le serveur
+CMD ["node", "bin/server.js"]
