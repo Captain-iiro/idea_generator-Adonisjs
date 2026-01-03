@@ -10,7 +10,8 @@ RUN npm ci
 # Copie du code source
 COPY . .
 
-# Build de l'application (génère le dossier ./build)
+# Build des assets frontend (Vite/React) + Build de l'application AdonisJS
+# node ace build va automatiquement appeler vite build grâce à @adonisjs/vite
 RUN node ace build
 
 # Phase 2: Production
